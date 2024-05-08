@@ -1,0 +1,154 @@
+<?php
+require('dbconn.php');
+
+?>
+
+<?php 
+if ($_SESSION['RollNo']== 'admin' ) {
+    ?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta user-scalable=no>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible"content="IE=edge">
+	<meta name="viewport" content="user-scalable=no, width=device-width" />
+	<link rel="stylesheet" href="css/css.css">
+    <link rel="stylesheet"href="css/responsive.css">
+    <link rel="stylesheet" href="css/datatables/jquery.css">
+   <script src="css/datatables/jquery.js"></script>
+   <script src="css/datatables/jtable.js"></script>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+	<title>Admin</title>
+
+	
+</head>
+
+<body>
+
+<?php 
+	include('../admin/includes/dasboard.php')
+	?>
+
+				</div>
+			</nav>
+		</div>
+		<div class="main">
+
+			<div class="searchbar2">
+				<input type="text"
+					name=""
+					id=""
+					placeholder="Search">
+				<div class="searchbtn">
+				<img src=
+"https://media.geeksforgeeks.org/wp-content/uploads/20221210180758/Untitled-design-(28).png"
+						class="icn srchicn"
+						alt="search-button">
+				</div>
+			</div>
+
+          
+
+				<div class="report-header">
+					<h1 class="recent-Articles">Lend Books</h1>
+				</div>
+            
+                    
+                <?php
+                                    if(isset($_POST['submit']))
+                                        {$s=$_POST['Textbook'];
+
+                                            $sql="select * from LMS.book where Section like '%$s%' OR Textbook like '%$s%'";
+                           
+                                        }
+                                    else
+                                        $sql="select * from LMS.book";
+
+                                    $result=$conn->query($sql);
+                                    $rowcount = mysqli_num_rows($result);
+
+                                    if(!($rowcount))
+                                        echo "<br><center><h2><b><i>No Results</i></b></h2></center>";
+                                    else
+                                    {                                    
+                                    ?>
+                        <table class="display" id = "list">
+                                  <thead>
+                                    <tr>
+                                      <th>Book id</th>
+                                       <th>Section</th>
+                                      <th>Book name</th>
+                                      <th>Availability</th>
+                                      <th>Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <?php
+                            
+                  
+                            while($row=$result->fetch_assoc())
+                            {
+                               $bookid=$row['BookId'];
+                                $section = $row['Section'];
+                                $name=$row['Textbook'];
+                                $avail=$row['Availability'];
+                            ?>
+                                    <tr>
+                                      <td><?php echo $bookid ?></td>
+                                       <td><?php echo $section ?></td>
+                                      <td><?php echo $name ?></td>
+                                     
+                                      <td><b><?php 
+                                           if($avail > 0)
+                                              echo "<font color=\"green\">AVAILABLE</font>";
+                                            else
+                                            	echo "<font color=\"red\">NOT AVAILABLE</font>";
+
+                                                 ?>
+                                                 	
+                                                 </b></td>
+                                    <td class="aTable"><a href="../admin/lendbooks.php?id=<?php echo $bookid; ?>"><button class="button2" id="lendBtn">Lend</button></a>
+                                      	
+                                  
+                                    </tr>
+                               <?php }} ?>
+    
+
+
+
+                                    <?php
+                                    $sql2 = "SELECT * FROM `user` WHERE Type = 'Student' AND Category = 'Student'";
+                                    $result2 = $conn->query($sql2);
+                                    $borrowers = [];
+
+                                    if ($result2->num_rows > 0) {
+                                        while ($row2 = $result2->fetch_assoc()) {
+                                            $borrowers[] = $row2;
+                                        }
+                                    }
+                                    ?>
+
+
+                               <div id="myModal" class="modal">
+
+
+      
+    </body>
+
+</html>
+<script>
+        $(document).ready(function () {
+    $('#list').DataTable();
+});
+</script>
+
+<?php ini_set('display_errors', 0);}
+else {
+    echo "<script type='text/javascript'>alert('Access Denied!!!')</script>";
+} ?>
+
